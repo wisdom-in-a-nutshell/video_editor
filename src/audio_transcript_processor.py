@@ -6,6 +6,7 @@ class AudioTranscriptProcessor:
     def __init__(self, chunk_size=1000):
         self.openai_client = OpenAIClient()
         self.chunked_transcriber = ChunkedTranscriber(chunk_size)
+        self.chunk_size = chunk_size
 
     def process_chunk(self, chunk):
         try:
@@ -16,10 +17,10 @@ class AudioTranscriptProcessor:
     def process_audio_file(self, audio_file_path):
         # Generate transcript chunks from the audio file
         chunks = self.chunked_transcriber.chunk_sentences(audio_file_path)
-        edited_markdown_file = '/tmp/live_players.md'
+        edited_markdown_file = f"/Users/adi/Documents/GitHub/video_editor/tmp/metaculus_{self.chunk_size}.md"
 
         # Process chunks in parallel
-        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
             future_to_chunk = {executor.submit(self.process_chunk, chunk): i for i, chunk in enumerate(chunks)}
             results = [None] * len(chunks)
             for future in concurrent.futures.as_completed(future_to_chunk):
@@ -41,6 +42,6 @@ class AudioTranscriptProcessor:
 
 # Example usage
 if __name__ == "__main__":
-    audio_file_path = "/Users/adi/Downloads/final_audio.mp3"
-    processor = AudioTranscriptProcessor(chunk_size=700)
+    audio_file_path = "/Users/adi/Downloads/metaculus.mp3"
+    processor = AudioTranscriptProcessor(chunk_size=800)
     processor.process_audio_file(audio_file_path)
