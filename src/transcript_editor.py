@@ -8,13 +8,14 @@ class TranscriptEditor:
 
     def process_transcript(self, input_file, output_file):
         chunks = self.transcript_reader.read_and_chunk_transcript(input_file)
-        edited_chunks = [self.openai_client.process_chunk(chunk) for chunk in chunks]
-        edited_transcript = self._combine_chunks(edited_chunks)
-        self._write_transcript(edited_transcript, output_file)
+        with open(output_file, 'w') as file:
+            for chunk in chunks:
+                edited_chunk = self.openai_client.process_chunk(chunk)
+                file.write(edited_chunk)
+                file.write('\n\n\n')  # Add separator between chunks
 
     def _write_transcript(self, transcript, file_path):
-        with open(file_path, 'w') as file:
+        with open(file_path, 'a') as file:
             file.write(transcript)
 
-    def _combine_chunks(self, chunks):
-        return ' '.join(chunks)
+    # The _combine_chunks method is no longer needed and has been removed

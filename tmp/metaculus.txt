@@ -1,69 +1,5 @@
-Nathan (00:00)
-have you seen my outline? I assume that made its way to you. Okay. Cool. So we can certainly.
-
-Deger (00:05)
-I did, yeah, yeah, look through it. Yeah, also a fan of previous chapters you've done too, so I'm excited to be here for it. Awesome.
-
-Nathan (00:14)
-Great, thank you. We can certainly deviate from that if there's anything you want to add or subtract, know, whatever, it's all good, but at least that's a good starting point, hopefully.
-
-Deger (00:20)
-Yeah, I think it looks good. I love going organic and just seeing where the conversation takes us. I do think, you know, talking a little about like approaches on socio -technical alignment is something that I find pretty interesting. Like before Metaculous, I was leading AI Objectives Institute, which is a research lab that focuses on contexts in which alignment manifests today. And I find that to be quite interesting as a counterweight.
-
-We can talk about that a little bit. But yeah, overall, I feel good. First time I'm doing a podcast also, so I am interested in seeing how that goes.
-
-Nathan (01:01)
-I it. I take a good amount of pride actually in having a lot of first time podcast guests. So that's cool. So yeah, maybe we'll just start a little bit with that at the top.
-
-Deger (01:07)
-Yeah. Cool. Any... So, yeah, because you said we will edit it, I guess I can like say, can we do a retake of a part or something and that's fine
-
-Nathan (01:23)
-Yeah, it's totally fine. We even in theory have AI tools that can help us with that to a certain degree now, although we do have a human oversight still in place for now at
-
-Deger (01:23)
-Yeah. OK,
-
-I don't
-
-Right, right. I think where the tech is at right now requires this. think that sounds about
-
-Nathan (01:42)
-There is actually later today, I have an interview with the CEO of Descript, which we use for editing. And they have recently launched a set of new features that collectively they call Underlord, which I think is funny. It's kind of obviously a play on Overlord. The idea is that the AI, you are the Overlord and the AI is the Underlord. But they do have a like retake removal where you can do these retakes and then just say
-
-Deger (01:47)
-huh.
-
-Alright, alright.
-
-huh.
-
-Nathan (02:10)
-remove my retakes and it will in theory go through and cut all that stuff. So yeah, it's new. I wouldn't say we've like battle tested it just yet, So yeah, maybe put a little bit of your kind of background at the top and then, you know, that can inform other things we talk about, but.
-
-Does that sound good to you? Just start with
-
-Deger (02:31)
-Yeah. That sounds good. I can also get to the background more from how did I start focusing on forecasting. I like the order of questions you put on the about you part. And then we can go from there and I can share what my interests are in the space and go from there. Cool.
-
-Nathan (02:50)
-Okay, cool. Can you pronounce your name for me so I can make sure I'm saying it correctly?
-
-Deger (02:55)
-It's there, like truth are there.
-
-Nathan (02:58)
-dare. Okay. And last name.
-
-Deger (02:59)
-Yes. To run.
-
 Nathan (03:02)
-Dare to
-
-Cool, well, let me get.
-
-kind of lost my voice at an event this past weekend and it's mostly back, but it's not a hundred percent back. So I apologize for not sounding my very best, but here we go. Deritron CEO of Metaculous. Welcome to the cognitive revolution.
+Deritron CEO of Metaculous. Welcome to the cognitive revolution.
 
 Deger (03:30)
 Thank you. Big fun here.
@@ -94,7 +30,7 @@ a machine system being able to take actions that yield net good. So exploring th
 
 Nathan (07:37)
 Cool. Just to rewind back in time for a second to the 2016 era, did any of that stuff work? Were you able to make anything with technology that was available at the time that you thought yielded any practical utility?
-
+op
 Deger (07:53)
 Yes, well, back then I was working actually with Dan Juravsky on a question at Stanford on federal agency regulatory feedback. So the FCC net neutrality debate was just taking off and there was 2 million comments that were submitted to the federal agency. And at that point, this seemed like, wow, this is the largest data set that was ever collected off, you know, raw text. Now it's ridiculously small,
 

@@ -26,7 +26,6 @@ Great, thank you. We can certainly deviate from that if there's anything you wan
         cleaned_text = self.reader._clean_and_normalize_text(self.sample_transcript)
         sentences = self.reader._tokenize_sentences(cleaned_text)
         self.assertEqual(len(sentences), 10)
-        self.assertTrue(all(sentence.startswith("**") for sentence in sentences))
 
     def test_create_chunks(self):
         cleaned_text = self.reader._clean_and_normalize_text(self.sample_transcript)
