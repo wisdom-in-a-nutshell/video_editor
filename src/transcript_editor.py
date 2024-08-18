@@ -1,5 +1,6 @@
 from openai_client import OpenAIClient
 from src.transcript_reader import TranscriptReader
+from src.transcriber.chunked_transcriber import ChunkedTranscriber
 
 class TranscriptEditor:
     def __init__(self, api_key, chunk_size=1000):
@@ -17,5 +18,3 @@ class TranscriptEditor:
     def _write_transcript(self, transcript, file_path):
         with open(file_path, 'a') as file:
             file.write(transcript)
-
-    # The _combine_chunks method is no longer needed and has been removed
