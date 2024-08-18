@@ -6,8 +6,8 @@ def main():
     # Load environment variables from .env file
     load_dotenv()
 
-    input_file = "/Users/adi/Documents/GitHub/video_editor/tmp/metaculus.txt"
-    output_file = "/Users/adi/Documents/GitHub/video_editor/tmp/metaculus_edited.txt"
+    input_file = "/tmp/metaculus.md"
+    output_file = "/tmp/metaculus_edited.md"
     
     editor = TranscriptEditor(os.getenv("OPENAI_API_KEY"))
     editor.process_transcript(input_file, output_file)
