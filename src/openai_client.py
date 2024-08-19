@@ -1,67 +1,89 @@
+import json
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
-from openai import OpenAI
 from pydantic import BaseModel
-from typing import List
+from typing import List, Dict, Any
 
-SYSTEM_PROMPT = """
-You are an AI assistant specialized in refining podcast transcripts for optimal video editing. Your primary task is to analyze raw transcripts and provide two outputs in a specific JSON format:
-
-1. A detailed chain of thought explaining your editing process.
-2. An edited version of the transcript with improved readability and conciseness, optimized for video creation.
-
-Your primary goals are to:
-- Identify and mark for removal: filler words, unnecessary repetitions, off-topic digressions, and fourth wall breaks.
-- Maintain the core message, flow, and speaker's voice.
-- Ensure the edited version remains coherent, meaningful, and suitable for video content.
-- Preserve the natural rhythm and pacing of the conversation for smooth video editing.
-
-Follow these steps:
-1. Carefully read and analyze the entire transcript, considering both audio and visual aspects.
-2. Identify elements that can be removed without altering the main content, flow, or timing of the conversation.
-3. In your chain of thought, explain your editing decisions, focusing on:
-   - Why certain parts were selected for removal
-   - How removing these parts improves clarity and conciseness
-   - Any challenges in maintaining coherence and natural conversation flow
-   - Considerations for visual cues or gestures mentioned in the transcript
-4. In the edited transcript:
-   - Use ~~strikethrough~~ to mark text for removal
-   - Do not add, rearrange, or modify any text
-   - Maintain the original word count, only marking for removal
-   - Consider the pacing and rhythm of speech for smooth video transitions
-
-Remember:
-- Prioritize clarity and conciseness while preserving the speaker's unique voice and style.
-- Consider the audio-visual context of a podcast-to-video conversion when making editing decisions.
-- Aim for the most trimmed version possible without compromising understanding, flow, or timing.
-
-Output Schema:
-Provide your response in the following JSON format:
-
-{
-  "chain_of_thought": {
-    "initial_analysis": "string",
-    "editing_goals": "string",
-    "editing_process": "string",
-    "conclusion": "string",
-    "next_step": "string"
+REASONING_PROMPT = {
+  "role": "You are an AI assistant specialized in analyzing podcast transcripts for optimal video editing.",
+  "task": "Analyze the given transcript and provide a detailed chain of thought explaining your editing process. Focus on identifying parts that can be removed to improve clarity and conciseness for video content.",
+  "goals": [
+    "Identify filler words, unnecessary repetitions, off-topic digressions, and fourth wall breaks.",
+    "Maintain the core message, flow, and speaker's voice.",
+    "Ensure the edited version remains coherent, meaningful, and suitable for video content.",
+    "Preserve the natural rhythm and pacing of the conversation for smooth video editing."
+  ],
+  "input_format": {
+    "type": "JSON",
+    "structure": {
+        "raw_transcript": "The transcript to be edited.",
+        "instructions": "Extra guidelines for the this specific transcript editing.",
+        "additional_context": "Additional context for the this specific transcript editing."
+    }
   },
-  "edited_transcript": "string"
+  "output_format": {
+    "type": "JSON",
+    "structure": {
+        "initial_analysis": "Overview of transcript content, key themes, speakers, and context.",
+        "editing_goals": "Specific objectives for improving the transcript.",
+        "editing_process": "Step-by-step approach, explaining each significant edit and reasoning.",
+        "conclusion": "Summary of overall impact on clarity, readability, and video suitability.",
+    }
+  },
+  "instructions": [
+    "Carefully read and analyze the entire transcript, considering the audio-visual nature of the final video product.",
+    "Pay attention to speaker annotations marked with **<speaker>:** format.",
+    "Identify elements that can be removed without altering the main content, flow, or timing of the conversation.",
+    "Explain your editing decisions, focusing on why certain parts were selected for removal and how this improves the transcript for video content.",
+    "Consider how edits might affect the pacing and flow of the conversation in a video format.",
+    "Aim for the most trimmed version possible without compromising understanding, flow, or timing.",
+    "Do not actually edit the transcript in this step, only provide the reasoning."
+  ]
 }
 
-Chain of Thought Sections:
-1. Initial Analysis: Provide an overview of the transcript content, identifying key themes, speakers, and the overall context of the discussion. Consider any visual or gestural cues mentioned.
-2. Editing Goals: Based on the initial analysis, outline specific objectives for improving the transcript, such as removing filler words or streamlining complex sentences, while maintaining the natural flow for video.
-3. Editing Process: Detail the step-by-step approach taken to edit the transcript, explaining each significant edit and the reasoning behind it, with particular attention to how it affects the video editing process.
-4. Conclusion: Summarize the overall impact of the edits on the transcript's clarity, readability, and suitability for video content.
-5. Next Step: Briefly describe the next action, which is to apply the proposed edits to the transcript using strikethrough text to mark words for removal, while maintaining the precise number and order of words.
 
-- The "chain_of_thought" object should contain detailed explanations of your thought process.
-- The "edited_transcript" should be the full transcript with parts marked for removal using ~~strikethrough~~.
-- Ensure all string values are properly escaped for valid JSON.
-"""
-
+EDITING_PROMPT = {
+  "role": "You are an AI assistant specialized in editing podcast transcripts for optimal video content.",
+  "task": "Using the provided chain of thought reasoning, edit the given transcript by marking parts for removal using strikethrough.",
+  "goals": [
+    "Apply the editing decisions from the chain of thought reasoning.",
+    "Maintain the core message, flow, and speaker's voice.",
+    "Ensure the edited version remains coherent, meaningful, and suitable for video content.",
+    "Preserve the natural rhythm and pacing of the conversation for smooth video editing."
+  ],
+  "input_format": {
+    "type": "JSON",
+    "structure": {
+        "raw_transcript": "The transcript to be edited.",
+        "chain_of_thought": "The reasoning behind the editing decisions.",
+        "instructions": "Extra guidelines for the this specific transcript editing."
+    }
+  },
+  "output_format": {
+    "type": "JSON",
+    "structure": {
+        "edited_transcript": "Full transcript with parts marked for removal using ~~strikethrough~~"
+    }
+  },
+  "instructions": [
+    "Use the chain of thought reasoning to guide your editing process.",
+    "Mark text for removal using ~~strikethrough~~ syntax.",
+    "Do not add, rearrange, or modify any text.",
+    "Maintain the original word count and order, only marking for removal.",
+    "Ensure the edited transcript reads coherently even with removed parts.",
+    "Consider the pacing and rhythm of speech for smooth video transitions.",
+    "Preserve speaker annotations marked with **<speaker>:** format.",
+    "Aim for clarity and conciseness while preserving the speaker's unique voice and style.",
+    "Pay special attention to maintaining the flow and coherence of the conversation in a video context."
+  ],
+  "constraints": [
+    "You must not remove or re-order anything within the transcript.",
+    "You can only suggest removals by using strikethrough.",
+    "The edited transcript must maintain the exact order of the original text.",
+    "Speaker annotations (**<speaker>:**) must always be preserved."
+  ]
+}
 
 load_dotenv()  # Load environment variables from .env file
 
@@ -70,10 +92,8 @@ class ChainOfThought(BaseModel):
     editing_goals: str
     editing_process: str
     conclusion: str
-    next_step: str
 
 class TranscriptResponse(BaseModel):
-    chain_of_thought: ChainOfThought
     edited_transcript: str
 
 class OpenAIClient:
@@ -83,17 +103,58 @@ class OpenAIClient:
             raise ValueError("API key must be set as OPENAI_API_KEY environment variable")
         self.client = OpenAI(api_key=api_key, base_url="http://192.168.2.210:4000")
 
-    def process_chunk(self, chunk):
+    def create_and_format_reasoning_input(self, chunk: str) -> List[Dict[str, str]]:
+        input_data = {
+            "raw_transcript": chunk,
+            "instructions": "Analyze this raw transcript and provide a detailed chain of thought on how to edit it for video content. Focus on identifying parts that can be removed to improve clarity and conciseness while maintaining the core message and speaker's voice. Consider the audio-visual nature of the final product and how edits might affect pacing and flow.",
+            "additional_context": "This is a podcast transcript being prepared for video content. This podcast features a conversation between CEO of Metaculus Dertron and Nathan labenz (the Host of the pdocast), about the platform's approach to forecasting and its applications in various domains, including AI development. Dertron discusses the differences between Metaculus and prediction markets, emphasizing the platform's focus on collaborative forecasting and epistemics rather than financial incentives. The conversation also explores the challenges of creating effective forecasting questions, the potential of AI-powered forecasting, and Metaculus' efforts to improve forecasting accuracy and usefulness through initiatives like the AI forecasting tournament and open-sourcing the platform. Speaker annotations are marked with **<speaker>:** format."
+        }
+        return [
+            {"role": "system", "content": json.dumps(REASONING_PROMPT)},
+            {"role": "user", "content": json.dumps(input_data)}
+        ]
+
+    def create_and_format_editing_input(self, chunk: str, chain_of_thought: ChainOfThought) -> List[Dict[str, str]]:
+        input_data = {
+            "raw_transcript": chunk,
+            "chain_of_thought": chain_of_thought.dict(),
+            "instructions": "Please apply the above chain of thought reasoning to edit the raw transcript provided. Follow the original instructions earlier, particularly regarding the use of strikethrough for marking removals and preserving the original order of the text. Return output in a JSON format with edited_transcript as the key."
+        }
+        return [
+            {"role": "system", "content": json.dumps(EDITING_PROMPT)},
+            {"role": "user", "content": json.dumps(input_data)}
+        ]
+
+    def process_chunk(self, chunk: str) -> str:
         try:
-            response = self.client.beta.chat.completions.parse(
-                model="video-editor-gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": f"<raw_transcript>{chunk}</raw_transcript>"}
-                ],
-                response_format=TranscriptResponse
+            # First API call to get the chain of thought reasoning
+            reasoning_messages = self.create_and_format_reasoning_input(chunk)
+            reasoning_response = self.client.beta.chat.completions.parse(
+                model="editor-episode-reasoning",
+                messages=reasoning_messages,
+                response_format=ChainOfThought,
+                temperature=0.7,
+                top_p=0.9,
+                frequency_penalty=0.3,
+                presence_penalty=0.2
             )
-            return response.choices[0].message.parsed.edited_transcript
+            chain_of_thought = reasoning_response.choices[0].message.parsed
+
+            # Second API call to get the edited transcript
+            editing_messages = self.create_and_format_editing_input(chunk, chain_of_thought)
+            editing_response = self.client.beta.chat.completions.parse(
+                model="editor-episode-marking",
+                messages=editing_messages,
+                response_format=TranscriptResponse,
+                temperature=0.2,
+                top_p=0.95,
+                frequency_penalty=0.1,
+                presence_penalty=0.1,
+
+            )
+            edited_transcript = editing_response.choices[0].message.parsed.edited_transcript
+
+            return edited_transcript
         except Exception as e:
             print(f"Error processing chunk: {str(e)}")
             return ""

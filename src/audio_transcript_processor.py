@@ -20,7 +20,7 @@ class AudioTranscriptProcessor:
         edited_markdown_file = f"/Users/adi/Documents/GitHub/video_editor/tmp/metaculus_{self.chunk_size}.md"
 
         # Process chunks in parallel
-        with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
             future_to_chunk = {executor.submit(self.process_chunk, chunk): i for i, chunk in enumerate(chunks)}
             results = [None] * len(chunks)
             for future in concurrent.futures.as_completed(future_to_chunk):
@@ -43,5 +43,5 @@ class AudioTranscriptProcessor:
 # Example usage
 if __name__ == "__main__":
     audio_file_path = "/Users/adi/Downloads/metaculus.mp3"
-    processor = AudioTranscriptProcessor(chunk_size=800)
+    processor = AudioTranscriptProcessor(chunk_size=1000)
     processor.process_audio_file(audio_file_path)
