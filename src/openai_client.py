@@ -107,7 +107,9 @@ class OpenAIClient:
         input_data = {
             "raw_transcript": chunk,
             "instructions": "Analyze this raw transcript and provide a detailed chain of thought on how to edit it for video content. Focus on identifying parts that can be removed to improve clarity and conciseness while maintaining the core message and speaker's voice. Consider the audio-visual nature of the final product and how edits might affect pacing and flow.",
-            "additional_context": "This is a podcast transcript being prepared for video content. This podcast features a conversation between CEO of Metaculus Dertron and Nathan labenz (the Host of the pdocast), about the platform's approach to forecasting and its applications in various domains, including AI development. Dertron discusses the differences between Metaculus and prediction markets, emphasizing the platform's focus on collaborative forecasting and epistemics rather than financial incentives. The conversation also explores the challenges of creating effective forecasting questions, the potential of AI-powered forecasting, and Metaculus' efforts to improve forecasting accuracy and usefulness through initiatives like the AI forecasting tournament and open-sourcing the platform. Speaker annotations are marked with **<speaker>:** format."
+            "additional_context": """
+The presentation outlines a process for implementing AI in business tasks, emphasizing task selection, deep understanding of work, and AI performance optimization. It stresses the importance of high-quality examples, realistic expectations, and iterative improvement to achieve human-level or better performance. The speaker advises businesses to focus on multiple "good enough" solutions across various areas, given the rapid evolution of AI technology.
+"""
         }
         return [
             {"role": "system", "content": json.dumps(REASONING_PROMPT)},
@@ -118,7 +120,10 @@ class OpenAIClient:
         input_data = {
             "raw_transcript": chunk,
             "chain_of_thought": chain_of_thought.dict(),
-            "instructions": "Please apply the above chain of thought reasoning to edit the raw transcript provided. Follow the original instructions earlier, particularly regarding the use of strikethrough for marking removals and preserving the original order of the text. Return output in a JSON format with edited_transcript as the key."
+            "instructions": "Please apply the above chain of thought reasoning to edit the raw transcript provided. Follow the original instructions earlier, particularly regarding the use of strikethrough for marking removals and preserving the original order of the text. Return output in a JSON format with edited_transcript as the key.",
+            "additional_context": """
+The presentation outlines a process for implementing AI in business tasks, emphasizing task selection, deep understanding of work, and AI performance optimization. It stresses the importance of high-quality examples, realistic expectations, and iterative improvement to achieve human-level or better performance. The speaker advises businesses to focus on multiple "good enough" solutions across various areas, given the rapid evolution of AI technology.
+"""
         }
         return [
             {"role": "system", "content": json.dumps(EDITING_PROMPT)},
