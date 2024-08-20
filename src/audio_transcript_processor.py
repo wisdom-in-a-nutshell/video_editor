@@ -17,7 +17,7 @@ class AudioTranscriptProcessor:
     def process_audio_file(self, audio_file_path):
         # Generate transcript chunks from the audio file
         chunks = self.chunked_transcriber.chunk_sentences(audio_file_path)
-        edited_markdown_file = f"/Users/adi/Documents/GitHub/video_editor/tmp/metaculus_{self.chunk_size}.md"
+        edited_markdown_file = f"/Users/adi/Documents/GitHub/video_editor/tmp/ai_automation_{self.chunk_size}.md"
 
         # Process chunks in parallel
         with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
@@ -42,6 +42,6 @@ class AudioTranscriptProcessor:
 
 # Example usage
 if __name__ == "__main__":
-    audio_file_path = "/Users/adi/Downloads/metaculus.mp3"
-    processor = AudioTranscriptProcessor(chunk_size=1000)
+    audio_file_path = "/Users/adi/Downloads/ai_automation.mp3"
+    processor = AudioTranscriptProcessor(chunk_size=400)
     processor.process_audio_file(audio_file_path)
