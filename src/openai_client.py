@@ -135,7 +135,7 @@ The presentation outlines a process for implementing AI in business tasks, empha
             # First API call to get the chain of thought reasoning
             reasoning_messages = self.create_and_format_reasoning_input(chunk)
             reasoning_response = self.client.beta.chat.completions.parse(
-                model="editor-episode-reasoning",
+                model="episode-editor-reasoning",
                 messages=reasoning_messages,
                 response_format=ChainOfThought,
                 temperature=0.7,
@@ -148,7 +148,7 @@ The presentation outlines a process for implementing AI in business tasks, empha
             # Second API call to get the edited transcript
             editing_messages = self.create_and_format_editing_input(chunk, chain_of_thought)
             editing_response = self.client.beta.chat.completions.parse(
-                model="editor-episode-marking",
+                model="episode-editor-marking",
                 messages=editing_messages,
                 response_format=TranscriptResponse,
                 temperature=0.2,

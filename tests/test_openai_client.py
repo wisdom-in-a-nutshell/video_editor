@@ -2,7 +2,6 @@ import json
 import unittest
 from unittest.mock import patch
 from src.openai_client import OpenAIClient, ChainOfThought
-from src.openai_client import REASONING_PROMPT, EDITING_PROMPT
 
 class TestOpenAIClient(unittest.TestCase):
 
@@ -18,7 +17,7 @@ class TestOpenAIClient(unittest.TestCase):
 
     def test_create_and_format_reasoning_input(self):
         expected_output = [
-            {"role": "system", "content": json.dumps(REASONING_PROMPT)},
+            {"role": "system", "content": json.dumps(self.client.REASONING_PROMPT)},
             {"role": "user", "content": json.dumps({
                 "raw_transcript": self.chunk,
                 "instructions": "Extra guidelines for this specific transcript editing.",
@@ -30,7 +29,7 @@ class TestOpenAIClient(unittest.TestCase):
 
     def test_create_and_format_editing_input(self):
         expected_output = [
-            {"role": "system", "content": json.dumps(EDITING_PROMPT)},
+            {"role": "system", "content": json.dumps(self.client.EDITING_PROMPT)},
             {"role": "user", "content": json.dumps({
                 "raw_transcript": self.chunk,
                 "chain_of_thought": self.chain_of_thought.dict(),
