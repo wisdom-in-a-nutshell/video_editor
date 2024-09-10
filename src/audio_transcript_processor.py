@@ -42,6 +42,6 @@ class AudioTranscriptProcessor:
 
 # Example usage
 if __name__ == "__main__":
-    audio_file_path = "/Users/adi/Downloads/trim2.opus"
+    audio_file_path = "/Users/adi/Downloads/ae_studio.mp3"
     processor = AudioTranscriptProcessor(chunk_size=700)
     processor.process_audio_file(audio_file_path)
